@@ -1,7 +1,6 @@
 package dsf.games.hanabi.action;
 
-import dsf.games.hanabi.GameManager;
-import dsf.games.hanabi.components.Card;
+import dsf.games.hanabi.components.HiddenHint;
 
 import org.apache.logging.log4j.Logger; 
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +9,7 @@ public class Move {
 	private static final Logger log = LogManager.getLogger(Move.class.getName());
 	private MoveType _moveType = null;
 	private Hint _hint = null;
+	private HiddenHint _hiddenHint = null;
 	private Integer _discardCard = null;
 	private Integer _playCard = null;
 	
@@ -17,8 +17,9 @@ public class Move {
 	
 	public void setGiveHint(Hint hint){
 		initialize();
-		_hint = hint;
+		_hiddenHint = new HiddenHint(hint);
 		_moveType = MoveType.Hint;
+		_hint = hint;
 	}
 	
 	public void setDiscardCard(int cardToDiscard){
@@ -49,6 +50,11 @@ public class Move {
 	public Hint getHint(){
 		return _hint;
 	}
+	
+	public HiddenHint getHiddenHint(){
+		return _hiddenHint;
+	}
+	
 	private void initialize(){
 		_moveType = null;
 		_hint = null;

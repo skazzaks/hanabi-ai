@@ -9,8 +9,6 @@ import java.util.Stack;
 import org.apache.logging.log4j.Logger; 
 import org.apache.logging.log4j.LogManager;
 
-import dsf.games.hanabi.GameManager;
-
 public class Deck {
 	private static final Logger log = LogManager.getLogger(Deck.class.getName());
 	// Underlying structure for deck of cards

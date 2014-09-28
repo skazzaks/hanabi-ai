@@ -2,6 +2,7 @@ package dsf.games.hanabi.components;
 
 import java.util.ArrayList;
 
+import dsf.games.hanabi.Player;
 import dsf.games.hanabi.action.Hint;
 import dsf.games.hanabi.action.HintType;
 
@@ -10,11 +11,12 @@ public class HiddenHint {
 	private Integer _value = null;
 	private ArrayList<Boolean> _hand = null;
 	private HintType _hintType = null;
+	private Player _hintedPlayer = null;
 	
-	public HiddenHint(Hint hint, Hand hand){
+	public HiddenHint(Hint hint){
 		_hand = new ArrayList<>();
-		
-		convertHintToHiddenHint(hint, hand);
+		_hintedPlayer = hint.getHintedPlayer();
+		convertHintToHiddenHint(hint, hint.getHintedPlayer().getHand());
 	}
 	
 	public ArrayList<Boolean> getHiddenHand(){
@@ -33,16 +35,20 @@ public class HiddenHint {
 		return _hintType;
 	}
 	
+	public Player getHintedPlayer(){
+		return _hintedPlayer;
+	}
+	
 	private void convertHintToHiddenHint(Hint hint, Hand hand){
 		_hintType = hint.getHintType();
 		
-		if(hint.getHintType() == _hintType.Color){
+		if(hint.getHintType() == HintType.Color){
 			_color = hint.getCardColor();
 			for(int i = 0; i < hand.getCards().size(); i++)
 				_hand.add(hand.getCards().get(i).getColor() == hint.getCardColor());
 		}
 		
-		if(hint.getHintType() == _hintType.Value){
+		if(hint.getHintType() == HintType.Value){
 			_value = hint.getCardValue();
 			for(int i = 0; i < hand.getCards().size(); i++)
 				_hand.add(hand.getCards().get(i).getValue() == hint.getCardValue());

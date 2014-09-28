@@ -3,8 +3,6 @@ package dsf.games.hanabi.components;
 import java.util.ArrayList;
 import java.util.List;
 
-import dsf.games.hanabi.Player;
-
 public class Hand {
 	
 	List<Card> _cards = new ArrayList<>();

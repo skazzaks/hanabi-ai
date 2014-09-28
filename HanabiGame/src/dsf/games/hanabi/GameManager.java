@@ -44,6 +44,7 @@ public class GameManager {
 	public void runGame()
 	{
 		log.info("Welcome to Hanabi! A new game is about to start.");
+		log.info("Today's player is: " + _players.get(0).getStrategy().getBotName() + ".");
 		log.info("------------------------------------------------");
 		
 		// Assign Starting Player
@@ -76,7 +77,11 @@ public class GameManager {
 		}
 		
 		log.info("Game over!");
-		// Print score
+		log.info("Final board state: ");
+		_board.printBoardState();
+		
+		// TODO DSF - print score
+		
 	}
 	
 	private Move getPlayerMove(Player currentPlayer){
@@ -84,9 +89,13 @@ public class GameManager {
 		
 		Player nextPlayer = getNextPlayer(currentPlayer);
 		for(int i = 0; i < (_players.size() - 1); i ++){
-			players.add(nextPlayer);
+			// Don't add this player! Otherwise they could see their hand
+			if(_players.get(i) != currentPlayer )
+				players.add(nextPlayer);
+			
 			nextPlayer = getNextPlayer(nextPlayer);
 		}
+		
 		return currentPlayer.getStrategy().makeMove(_board, players, _discardPile, _deck.getRemainingCardCount(), _remainingStorms, _numAvailTips);
 	}
 	
@@ -121,17 +130,28 @@ public class GameManager {
 		// If they didn't  do a valid move, we should just do a default crappy move
 		if(!moveWasValid){
 			log.info("\tInvalid move!");
-			performDefaultMove(currentPlayer);
+			move = performDefaultMove(currentPlayer);
+		}
+		
+		// Alert all players that a move was made
+		for(Player p : _players) {
+			try{
+			p.getStrategy().moveMade(currentPlayer, move, _board, _discardPile, _deck.getRemainingCardCount(), _remainingStorms, _numAvailTips);
+			}
+			catch(Exception e)
+			{
+			}
 		}
 	}
 	
-	private void performDefaultMove(Player currentPlayer) {
+	private Move performDefaultMove(Player currentPlayer) {
 		log.info("\tPerforming default move...");
 		// Build up a Discard Move
 		Move m = new Move();
 		m.setDiscardCard(0);
 		
 		handleDiscardMove(m, currentPlayer);
+		return m;
 	}
 	
 	private boolean handlePlayMove(Move move, Player currentPlayer) {
@@ -143,11 +163,8 @@ public class GameManager {
 		Card c =currentPlayer.getHand().getCards().get(move.getPlayedCard());
 		
 		log.info("\tPlayed: " + c.getColor() + " " + c.getValue());
-		Player.printHand(currentPlayer);
-		log.debug(move.getPlayedCard());
 		currentPlayer.getHand().removeCard(move.getPlayedCard());
 		Player.printHand(currentPlayer);
-		
 		
 		// If the play was valid...
 		if(_board.isCardValid(c)){
@@ -201,6 +218,8 @@ public class GameManager {
 			return false;
 		else if(move.getHint().getHintType() == HintType.Value && move.getHint().getCardValue() == null)
 			return false;
+		else if(_numAvailTips == 0)
+			return false;
 		
 		String hintValue = "";
 		if(move.getHint().getHintType() == HintType.Color)
@@ -210,10 +229,7 @@ public class GameManager {
 		
 		log.info("\tGave hint to Player " + (_players.indexOf(move.getHint().getHintedPlayer()) + 1) + ": " +  hintValue + ".");
 		
-		// Otherwise, the tip is valid, so give it to the player
-		move.getHint().getHintedPlayer().receiveHint(currentPlayer, move.getHint());
-		
-		// Discrease the tip count
+		// Decrease the tip count
 		decreaseAvailableTipCount();
 		
 		return true;
@@ -275,8 +291,9 @@ public class GameManager {
 		
 		// Setup the players
 		for(int i = 0; i < numPlayers; i++){
-			theStrat.initialGameConditions(_numPlayers, _numTips);
-			_players.add(new Player(_deck, theStrat, startingCards));	
+			Player p = new Player(_deck, theStrat, startingCards);
+			_players.add(p);
+			theStrat.initialGameConditions(p, _numPlayers, startingCards, _numTips);
 		}
 	}
 
