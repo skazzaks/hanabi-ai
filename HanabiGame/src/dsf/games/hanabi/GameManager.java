@@ -63,7 +63,7 @@ public class GameManager {
 				move = getPlayerMove(currentPlayer);
 			}
 			catch(Exception e){
-				move = null;
+				log.info("Whoops! " + e.getStackTrace());
 			}
 			
 			// Now, handle the move we got back
@@ -90,10 +90,10 @@ public class GameManager {
 		ArrayList<HandPublic> hands = new ArrayList<HandPublic>();
 		
 		Player nextPlayer = getNextPlayer(currentPlayer);
-		for(int i = 0; i < (_players.size() - 1); i ++){
+		for(int i = 0; i < _players.size(); i ++){
 			// Don't add this player! Otherwise they could see their hand
-			if(_players.get(i) != currentPlayer )
-				hands.add(new HandPublic(nextPlayer.getHand()));
+			if(_players.get(i) != currentPlayer)
+				hands.add(new HandPublic(nextPlayer.getHand(), nextPlayer.getPlayerNumber()));
 			
 			nextPlayer = getNextPlayer(nextPlayer);
 		}
@@ -131,7 +131,7 @@ public class GameManager {
 		
 		// If they didn't  do a valid move, we should just do a default crappy move
 		if(!moveWasValid){
-			log.info("\tInvalid move! " + move != null ? move.getMoveType() : "");
+			log.info("\tInvalid move! " +  (move != null ? move.getMoveType().toString() : ""));
 			log.info("\t" + _numAvailTips);
 			
 			move = performDefaultMove(currentPlayer);
@@ -215,7 +215,7 @@ public class GameManager {
 
 	private boolean handleHintMove(Move move, Player currentPlayer) {
 		// validate that player did not send a hint to themself
-		if(currentPlayer == move.getHint().getHintedPlayer())
+		if(currentPlayer.getPlayerNumber() == move.getHint().getHintedPlayer())
 			return false;
 		
 		if(move.getHint().getHintType() == HintType.Color && move.getHint().getCardColor() == null)
@@ -232,10 +232,10 @@ public class GameManager {
 			hintValue = move.getHint().getCardValue().toString();
 		
 		// Update the info of this person's hand
-		move.getHint().getHintedPlayer().getHand().updateHandInfo(move.getHint());
+		_players.get(move.getHint().getHintedPlayer()).getHand().updateHandInfo(move.getHint());
 		
 		log.info("\tGave hint to Player " + (_players.indexOf(move.getHint().getHintedPlayer()) + 1) + ": " +  hintValue + ".");
-		Player.printHandHints(move.getHint().getHintedPlayer());
+		Player.printHandHints(_players.get(move.getHint().getHintedPlayer()));
 		
 		// Decrease the tip count
 		decreaseAvailableTipCount();
@@ -299,7 +299,7 @@ public class GameManager {
 		
 		// Setup the players
 		for(int i = 0; i < numPlayers; i++){
-			Player p = new Player(_deck, theStrat, startingCards, i + 1);
+			Player p = new Player(_deck, theStrat, startingCards, i);
 			_players.add(p);
 			theStrat.initialGameConditions(p, _numPlayers, startingCards, _numTips);
 		}

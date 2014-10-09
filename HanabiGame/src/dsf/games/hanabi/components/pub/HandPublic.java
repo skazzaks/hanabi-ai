@@ -9,8 +9,11 @@ import dsf.games.hanabi.components.Hand;
 public class HandPublic {
 
 	private Hand _hand = null;
-	public HandPublic(Hand hand){
+	private int _playerIndex = 0;
+	
+	public HandPublic(Hand hand, int playerIndex){
 		_hand = hand;
+		_playerIndex = playerIndex;
 	}
 	
 	public List<Card> getCards(){
@@ -21,5 +24,7 @@ public class HandPublic {
 		return _hand.getCardHints();
 	}
 	
-	
+	public int getPlayerIndex(){
+		return _playerIndex;
+	}
 }

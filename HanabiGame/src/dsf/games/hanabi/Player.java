@@ -13,12 +13,12 @@ public class Player {
 	private IStrategy _strategy;
 	private Hand _hand;
 	private Deck _deck;
-	private int playerNumber;
+	private int _playerNumber;
 	
 	public Player(Deck deck, IStrategy strategy, int initialHandSize, int playerNumber){
 		_strategy = strategy;
 		_deck = deck;
-		
+		_playerNumber = playerNumber;
 		initialize(initialHandSize);
 	}
 	
@@ -31,7 +31,7 @@ public class Player {
 	}
 	
 	public int getPlayerNumber(){
-		return playerNumber;
+		return _playerNumber;
 	}
 	
 	public void drawCard() {

@@ -5,18 +5,19 @@ import java.util.ArrayList;
 import dsf.games.hanabi.Player;
 import dsf.games.hanabi.action.Hint;
 import dsf.games.hanabi.action.HintType;
+import dsf.games.hanabi.components.pub.HandPublic;
 
 public class HiddenHint {
 	private CardColor _color = null;
 	private Integer _value = null;
 	private ArrayList<Boolean> _hand = null;
 	private HintType _hintType = null;
-	private Player _hintedPlayer = null;
+	private int _hintedPlayer = 0;
 	
-	public HiddenHint(Hint hint){
+	public HiddenHint(Hint hint, HandPublic hand){
 		_hand = new ArrayList<>();
 		_hintedPlayer = hint.getHintedPlayer();
-		convertHintToHiddenHint(hint, hint.getHintedPlayer().getHand());
+		convertHintToHiddenHint(hint, hand);
 	}
 	
 	public ArrayList<Boolean> getHiddenHand(){
@@ -36,10 +37,10 @@ public class HiddenHint {
 	}
 	
 	public int getHintedPlayer(){
-		return _hintedPlayer.getPlayerNumber();
+		return _hintedPlayer;
 	}
 	
-	private void convertHintToHiddenHint(Hint hint, Hand hand){
+	private void convertHintToHiddenHint(Hint hint, HandPublic hand){
 		_hintType = hint.getHintType();
 		
 		if(hint.getHintType() == HintType.Color){

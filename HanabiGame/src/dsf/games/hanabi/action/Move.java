@@ -1,6 +1,7 @@
 package dsf.games.hanabi.action;
 
 import dsf.games.hanabi.components.HiddenHint;
+import dsf.games.hanabi.components.pub.HandPublic;
 
 import org.apache.logging.log4j.Logger; 
 import org.apache.logging.log4j.LogManager;
@@ -15,9 +16,9 @@ public class Move {
 	
 	public Move(){}
 	
-	public void setGiveHint(Hint hint){
+	public void setGiveHint(Hint hint, HandPublic hand){
 		initialize();
-		_hiddenHint = new HiddenHint(hint);
+		_hiddenHint = new HiddenHint(hint, hand);
 		_moveType = MoveType.Hint;
 		_hint = hint;
 	}

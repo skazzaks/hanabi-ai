@@ -18,8 +18,17 @@ public class BotLogicHelpers {
 	 * @param card The card to be played
 	 * @return Whether or not the card can be played
 	 */
-	public static boolean cardIsValid(GameBoard gameboard, Card card){
+	public static boolean cardIsValid(GameBoardPublic gameboard, Card card){
 		return gameboard.isCardValid(card);
+	}
+	
+	
+	public static boolean cardIsValid(GameBoardPublic gameboard, CardInfo ci){
+		if(ci.getColor() != null && ci.getValue() != null){
+			return gameboard.isCardValid(new Card(ci.getColor(), ci.getValue()));
+		}
+		
+		return false;
 	}
 	
 	/***
@@ -48,7 +57,7 @@ public class BotLogicHelpers {
 		return hand.getCountOfColor(theColor);
 	}
 	
-	public static int getHowManyOfNumberStillValid(GameBoard gameboard, int number){
+	public static int getHowManyOfNumberStillValid(GameBoardPublic gameboard, int number){
 		return gameboard.getCountOfNumberStillValid(number);
 	}
 	

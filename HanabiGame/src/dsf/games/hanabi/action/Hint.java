@@ -4,26 +4,26 @@ import dsf.games.hanabi.Player;
 import dsf.games.hanabi.components.CardColor;
 
 public class Hint {
-	private Player _playerToGiveHint;
+	private int _playerToGiveHint;
 	private HintType _hintType;
 	private CardColor _cardColor = null;
 	private Integer _cardValue;
 	
-	public Hint(Player playerToGiveHint, CardColor cardColor)
+	public Hint(int playerToGiveHint, CardColor cardColor)
 	{
 		_playerToGiveHint = playerToGiveHint;
 		_cardColor = cardColor;
 		_hintType = HintType.Color;
 	}
 	
-	public Hint(Player playerToGiveHint, int value)
+	public Hint(int playerToGiveHint, int value)
 	{
 		_playerToGiveHint = playerToGiveHint;
 		_cardValue = value;
 		_hintType = HintType.Value;
 	}
 	
-	public Player getHintedPlayer() {
+	public int getHintedPlayer() {
 		return _playerToGiveHint;
 	}
 	
