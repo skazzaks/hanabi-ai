@@ -35,8 +35,8 @@ public class HiddenHint {
 		return _hintType;
 	}
 	
-	public Player getHintedPlayer(){
-		return _hintedPlayer;
+	public int getHintedPlayer(){
+		return _hintedPlayer.getPlayerNumber();
 	}
 	
 	private void convertHintToHiddenHint(Hint hint, Hand hand){

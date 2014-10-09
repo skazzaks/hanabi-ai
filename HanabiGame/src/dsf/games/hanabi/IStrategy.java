@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dsf.games.hanabi.action.Move;
+import dsf.games.hanabi.components.CardInfo;
 import dsf.games.hanabi.components.Card;
 import dsf.games.hanabi.components.GameBoard;
+import dsf.games.hanabi.components.pub.GameBoardPublic;
+import dsf.games.hanabi.components.pub.HandPublic;
 
 /***
  * The only file that players need to fill out. This class will be loaded into the Console application and run as the logic for the bot.
@@ -36,16 +39,17 @@ public interface IStrategy {
 	 * @param gameboard The current gameboard - this is useful to see which cards are can be successfully played
 	 * @param players - All players except for you. Use this to find information about other player's hands.
 	 * @param discardPile - The full discard pile
+	 * @param yourCardHints - the hints that have been given to you about your hand up until now. 
 	 * @param cardsRemaining - How many cards are remaining in the deck
 	 * @param stormsRemaining - The number of storms remaining until a loss
 	 * @param tipsRemaining - The number of tips remaining to use
 	 * @return The fully filled out move that you plan to make.
 	 */
-	public Move makeMove(GameBoard gameboard, ArrayList<Player> players, ArrayList<Card> discardPile, int cardsRemaining, int stormsRemaining, int tipsRemaining);
+	public Move makeMove(GameBoardPublic gameboard, List<HandPublic> hands, ArrayList<Card> discardPile, List<CardInfo> yourCardHints, int cardsRemaining, int stormsRemaining, int tipsRemaining);
 	
 	/***
 	 * Sent every time a move is made. Use this information to store what has been happening during the game so that you can make a more informed move on your turn
-	 * @param actingPlayer The player that made the move
+	 * @param actingPlayerIndex The player that made the move
 	 * @param move The move that was made 
 	 * @param gameboard The current gameboard - this is useful to see which cards are can be successfully played
 	 * @param discardPile - The full discard pile
@@ -53,5 +57,5 @@ public interface IStrategy {
 	 * @param stormsRemaining - The number of storms remaining until a loss
 	 * @param tipsRemaining - The number of tips remaining to use
 	 */
-	public void moveMade(Player actingPlayer, Move move, GameBoard gameboard, ArrayList<Card> discardPile, int cardsRemaining, int stormsRemaining, int tipsRemaining);
+	public void moveMade(int actingPlayerIndex, Move move, GameBoardPublic gameboard, ArrayList<Card> discardPile, int cardsRemaining, int stormsRemaining, int tipsRemaining);
 }

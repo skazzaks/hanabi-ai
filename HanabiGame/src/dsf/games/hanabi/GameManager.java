@@ -1,6 +1,7 @@
 package dsf.games.hanabi;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import dsf.games.hanabi.action.HintType;
@@ -9,6 +10,7 @@ import dsf.games.hanabi.action.MoveType;
 import dsf.games.hanabi.components.Card;
 import dsf.games.hanabi.components.Deck;
 import dsf.games.hanabi.components.GameBoard;
+import dsf.games.hanabi.components.pub.HandPublic;
 import dsf.helpers.MyClassLoader;
 
 import org.apache.logging.log4j.Logger; 
@@ -85,18 +87,18 @@ public class GameManager {
 	}
 	
 	private Move getPlayerMove(Player currentPlayer){
-		ArrayList<Player> players = new ArrayList<Player>();
+		ArrayList<HandPublic> hands = new ArrayList<HandPublic>();
 		
 		Player nextPlayer = getNextPlayer(currentPlayer);
 		for(int i = 0; i < (_players.size() - 1); i ++){
 			// Don't add this player! Otherwise they could see their hand
 			if(_players.get(i) != currentPlayer )
-				players.add(nextPlayer);
+				hands.add(new HandPublic(nextPlayer.getHand()));
 			
 			nextPlayer = getNextPlayer(nextPlayer);
 		}
 		
-		return currentPlayer.getStrategy().makeMove(_board, players, _discardPile, _deck.getRemainingCardCount(), _remainingStorms, _numAvailTips);
+		return currentPlayer.getStrategy().makeMove(_board.getPublicGameBoard(), hands, (ArrayList<Card>)_discardPile.clone(), currentPlayer.getHand().getCardHints(), _deck.getRemainingCardCount(), _remainingStorms, _numAvailTips);
 	}
 	
 	
@@ -129,14 +131,16 @@ public class GameManager {
 		
 		// If they didn't  do a valid move, we should just do a default crappy move
 		if(!moveWasValid){
-			log.info("\tInvalid move!");
+			log.info("\tInvalid move! " + move != null ? move.getMoveType() : "");
+			log.info("\t" + _numAvailTips);
+			
 			move = performDefaultMove(currentPlayer);
 		}
 		
 		// Alert all players that a move was made
 		for(Player p : _players) {
 			try{
-			p.getStrategy().moveMade(currentPlayer, move, _board, _discardPile, _deck.getRemainingCardCount(), _remainingStorms, _numAvailTips);
+				p.getStrategy().moveMade(currentPlayer.getPlayerNumber(), move, _board.getPublicGameBoard(), (ArrayList<Card>)_discardPile.clone(), _deck.getRemainingCardCount(), _remainingStorms, _numAvailTips);
 			}
 			catch(Exception e)
 			{
@@ -227,7 +231,11 @@ public class GameManager {
 		else if(move.getHint().getHintType() == HintType.Value)
 			hintValue = move.getHint().getCardValue().toString();
 		
+		// Update the info of this person's hand
+		move.getHint().getHintedPlayer().getHand().updateHandInfo(move.getHint());
+		
 		log.info("\tGave hint to Player " + (_players.indexOf(move.getHint().getHintedPlayer()) + 1) + ": " +  hintValue + ".");
+		Player.printHandHints(move.getHint().getHintedPlayer());
 		
 		// Decrease the tip count
 		decreaseAvailableTipCount();
@@ -291,7 +299,7 @@ public class GameManager {
 		
 		// Setup the players
 		for(int i = 0; i < numPlayers; i++){
-			Player p = new Player(_deck, theStrat, startingCards);
+			Player p = new Player(_deck, theStrat, startingCards, i + 1);
 			_players.add(p);
 			theStrat.initialGameConditions(p, _numPlayers, startingCards, _numTips);
 		}

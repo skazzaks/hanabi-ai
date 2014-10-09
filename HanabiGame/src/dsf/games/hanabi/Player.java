@@ -1,6 +1,7 @@
 package dsf.games.hanabi;
 
 import dsf.games.hanabi.components.Card;
+import dsf.games.hanabi.components.CardInfo;
 import dsf.games.hanabi.components.Deck;
 import dsf.games.hanabi.components.Hand;
 
@@ -12,9 +13,9 @@ public class Player {
 	private IStrategy _strategy;
 	private Hand _hand;
 	private Deck _deck;
+	private int playerNumber;
 	
-	
-	public Player(Deck deck, IStrategy strategy, int initialHandSize){
+	public Player(Deck deck, IStrategy strategy, int initialHandSize, int playerNumber){
 		_strategy = strategy;
 		_deck = deck;
 		
@@ -29,6 +30,9 @@ public class Player {
 		return _hand;
 	}
 	
+	public int getPlayerNumber(){
+		return playerNumber;
+	}
 	
 	public void drawCard() {
 		if(_deck.getRemainingCardCount() != 0)
@@ -54,5 +58,22 @@ public class Player {
 		}
 		
 		log.debug("Hand: " + handcards);
+	}
+	
+	public static void printHandHints(Player player){
+		String handcards = "";
+		for(CardInfo c : player.getHand().getCardHints()){
+			handcards += "[";
+			if(c.getColor() != null){
+				handcards += c.getColor();
+			}
+			handcards += ",";
+			if(c.getValue() != null){
+				handcards += c.getValue().toString();
+			}
+			handcards += "]";
+		}
+		
+		log.debug("Hand Hints: " + handcards);
 	}
 }
