@@ -283,22 +283,25 @@ public class GameManager {
 		// 2-3 players: 5 cards, 4-5 players: 4 cards
 		int startingCards = (numPlayers == 2 || numPlayers == 3) ? 5 : 4; 
 		
-		// TODO Get the AI Class
-		IStrategy theStrat = null;
-		try
-		{
-			theStrat = loadInStrategy();
-		}
-		catch(Exception e){
-			System.out.println("Could not load in strategy file!");
-			e.printStackTrace();
-		}
+		
 		
 		// Setup the Gameboard
 		_board = new GameBoard();
 		
 		// Setup the players
 		for(int i = 0; i < numPlayers; i++){
+			
+			// TODO Get the AI Class
+			IStrategy theStrat = null;
+			try
+			{
+				theStrat = loadInStrategy();
+			}
+			catch(Exception e){
+				System.out.println("Could not load in strategy file!");
+				e.printStackTrace();
+			}
+			
 			Player p = new Player(_deck, theStrat, startingCards, i);
 			_players.add(p);
 			theStrat.initialGameConditions(p, _numPlayers, startingCards, _numTips);
